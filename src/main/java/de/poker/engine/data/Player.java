@@ -1,4 +1,4 @@
-package de.poker.engine;
+package de.poker.engine.data;
 
 import java.util.UUID;
 

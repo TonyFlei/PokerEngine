@@ -1,5 +1,8 @@
-package de.poker.engine;
+package de.poker.engine.service;
 
+import de.poker.engine.data.Card;
+import de.poker.engine.data.Rank;
+import de.poker.engine.data.Suit;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

@@ -1,5 +1,6 @@
-package de.poker.engine;
+package de.poker.engine.service;
 
+import de.poker.engine.data.GameState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

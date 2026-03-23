@@ -1,4 +1,4 @@
-package de.poker.engine;
+package de.poker.engine.data;
 
 public enum Rank {
     Ace,

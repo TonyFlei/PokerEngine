@@ -1,5 +1,9 @@
 package de.poker.engine;
 
+import de.poker.engine.data.Card;
+import de.poker.engine.data.Rank;
+import de.poker.engine.data.Suit;
+import de.poker.engine.service.DeckService;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;
