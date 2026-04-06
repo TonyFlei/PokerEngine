@@ -1,6 +1,7 @@
 package de.poker.engine.service;
 
 import de.poker.api.dto.PlayerUpdate;
+import de.poker.api.exceptions.TableFullException;
 import de.poker.api.exceptions.TableNotFoundException;
 import de.poker.engine.data.Player;
 import de.poker.engine.data.Table;
@@ -24,9 +25,20 @@ public class TableService {
     }
 
     public PlayerUpdate registerPlayer(String tableId) {
+        Table table;
 
-        Table table = tableId != null ? tables.stream().filter(t -> t.getId().equals(tableId)).findFirst().orElseThrow(() -> new TableNotFoundException(tableId)) :
-                findTable();
+        if (tableId == null) {
+            table = findTable();
+        } else {
+            table = tables.stream()
+                    .filter(t -> t.getId().equals(tableId))
+                    .findFirst()
+                    .orElseThrow(() -> new TableNotFoundException(tableId));
+
+            if (table.getPlayers().size() >= 10) {
+                throw new TableFullException(tableId);
+            }
+        }
 
         return seatPlayer(table);
     }

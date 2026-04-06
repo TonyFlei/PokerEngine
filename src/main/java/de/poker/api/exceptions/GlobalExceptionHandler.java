@@ -20,4 +20,15 @@ public class GlobalExceptionHandler {
                         "message", ex.getMessage()
                 ));
     }
+
+    @ExceptionHandler(TableFullException.class)
+    public ResponseEntity<?> handleTableFull(TableFullException ex) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT) // 409
+                .body(Map.of(
+                        "error", "TABLE_FULL",
+                        "message", ex.getMessage()
+                ));
+    }
 }

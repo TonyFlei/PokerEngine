@@ -1,9 +1,12 @@
 package de.poker.engine.service;
 
 import de.poker.api.dto.PlayerUpdate;
+import de.poker.api.exceptions.TableFullException;
+import de.poker.api.exceptions.TableNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TableServiceTest {
 
@@ -100,5 +103,31 @@ class TableServiceTest {
         assertThat(testee.oldPlayers()).hasSize(6);
         assertThat(testee.table()).isEqualTo(reference.table());
         assertThat(testee.newPlayer()).isNotBlank();
+    }
+
+    @Test
+    void registerNewPlayerOnDedicatedTableNotFound(){
+        TableService service = new TableService();
+
+        assertThatThrownBy(() -> service.registerPlayer("notATable")).isInstanceOf(TableNotFoundException.class).hasMessage("Table with id: notATable does not exist");
+    }
+
+    @Test
+    void registerNewPlayerOnDedicatedTableFullTable(){
+        TableService service = new TableService();
+
+        var reference = service.registerPlayer();
+
+        service.registerPlayer(reference.table());
+        service.registerPlayer(reference.table());
+        service.registerPlayer(reference.table());
+        service.registerPlayer(reference.table());
+        service.registerPlayer(reference.table());
+        service.registerPlayer(reference.table());
+        service.registerPlayer(reference.table());
+        service.registerPlayer(reference.table());
+        service.registerPlayer(reference.table());
+
+        assertThatThrownBy(() -> service.registerPlayer(reference.table())).isInstanceOf(TableFullException.class).hasMessage("Table with id: " + reference.table() +" is full");
     }
 }
