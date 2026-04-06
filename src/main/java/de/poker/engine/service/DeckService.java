@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@Service
 public class DeckService {
 
     private final List<Card> deck;

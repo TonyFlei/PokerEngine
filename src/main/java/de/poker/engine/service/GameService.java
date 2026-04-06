@@ -1,5 +1,6 @@
 package de.poker.engine.service;
 
+import de.poker.engine.data.Player;
 import de.poker.engine.data.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,15 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.ExecutorService;
+import java.util.List;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class GameService {
 
     private static final Logger LOG = LoggerFactory.getLogger(GameService.class);
     private final SimpMessagingTemplate messagingTemplate;
-    private final ExecutorService executor = Executors.newCachedThreadPool();
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
 
     @Autowired
     public GameService(SimpMessagingTemplate messagingTemplate) {
@@ -24,30 +28,22 @@ public class GameService {
 
 
     public void startGame(Table table) {
-        executor.submit(() -> runGameLoop(table));
+        LOG.info("Starting a new game on Table: {}", table.getId());
+
+        ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(() -> {
+            //ToDo - game stoppen
+            System.out.println("gameRunning");
+
+            runGameLoop(table);
+
+        }, 0, 1000, TimeUnit.MILLISECONDS);
     }
 
     private void runGameLoop(Table table) {
+        //All players which will play this round. Meanwhile, other Players can join the table.
+        table.setPlayersForGame(table.getPlayers());
 
-        LOG.info("Starting a new game on Table: {}", table.getId());
+        table.preFlop();
 
-        //As long as at least 2 Players seat on the Table the game loop will continue.
-        while (table.getPlayers().size() > 1) {
-            try {
-                Thread.sleep(100);
-                System.out.println("gameRunning");
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-            table.initGame();
-
-            //ToDo notify people
-
-        }
-
-        LOG.info("Stoping game on Table: {}", table.getId());
-
-        table.stopGame();
     }
 }
