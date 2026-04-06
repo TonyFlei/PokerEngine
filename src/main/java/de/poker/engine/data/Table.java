@@ -37,4 +37,17 @@ public class Table {
     public String getId() {
         return id;
     }
+
+    public boolean checkAndStartGame() {
+        //When game is already running return false
+        if (!gameState.getStatus().equals(GameStatus.WAITING)) return false;
+
+        startGame();
+
+        return true;
+    }
+
+    private void startGame() {
+        //ToDo Status anpassen, Karten austeilen, Spieler List blocken usw.
+    }
 }

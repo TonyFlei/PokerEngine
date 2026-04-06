@@ -4,6 +4,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class GameState {
+    private GameStatus status;
 
+    public GameState() {
+        this.status = GameStatus.WAITING;
+    }
 
+    public GameStatus getStatus() {
+        return status;
+    }
 }

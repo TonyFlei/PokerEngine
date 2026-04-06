@@ -25,17 +25,31 @@ public class TableService {
     }
 
     /**
-     * Creates a new Player Object and seats the Player.
-     * If a tableId is given and there is no Table with this id or the Table is full an Exception will be raised.
-     * @param tableId tableId of the Table you want to join, if there is no tableId given you get seated on a Table, that is not full.
-     * @return Information about the newly joined Player, the current Players on the Table and the Table.
+     * Creates a new player and assigns them to a table.
+     *
+     * <p>If a {@code tableId} is provided, the player will attempt to join the specified table.
+     * If no table with the given ID exists or the table is already full, an exception is thrown.</p>
+     *
+     * <p>If no {@code tableId} is provided, the player will be seated at the first available table
+     * that has free capacity.</p>
+     *
+     * <p>After successfully seating the player, all other players at the table are notified.
+     * If the newly seated player is the second player at the table, the game start is triggered.</p>
+     *
+     * @param tableId the ID of the table to join; may be {@code null}
+     * @return a {@link PlayerUpdate} containing information about the newly joined player,
+     *         the current players at the table, and the table state
+     *
+     * @throws TableNotFoundException if the specified table does not exist
+     * @throws TableFullException if the specified table has no available seats
      */
     public PlayerUpdate registerPlayer(String tableId) {
         Table table = getTable(tableId);
 
         PlayerUpdate update = seatPlayer(table);
 
-        gameService.handlePlayerJoined(update);
+        //Only if 1 Player is waiting you have to check if the game can start. The rest will be handled by the game loop.
+        if (table.getPlayers().size() == 2) gameService.checkAndStartGame(table);
 
         return update;
     }
@@ -46,10 +60,7 @@ public class TableService {
         if (tableId == null) {
             table = findTable();
         } else {
-            table = tables.stream()
-                    .filter(t -> t.getId().equals(tableId))
-                    .findFirst()
-                    .orElseThrow(() -> new TableNotFoundException(tableId));
+            table = getTableById(tableId);
 
             if (table.getPlayers().size() >= 10) {
                 throw new TableFullException(tableId);
@@ -58,14 +69,22 @@ public class TableService {
         return table;
     }
 
+    protected @NonNull Table getTableById(String tableId) {
+        Table table;
+        table = tables.stream()
+                .filter(t -> t.getId().equals(tableId))
+                .findFirst()
+                .orElseThrow(() -> new TableNotFoundException(tableId));
+        return table;
+    }
+
     private static @NonNull PlayerUpdate seatPlayer(Table table) {
-        List<String> currentPlayers = table.getPlayers().stream().map(Player::getId).toList();
 
         Player player = table.registerPlayer();
 
         LOG.info("A new Player with the id: {} got seated on a Table with the id: {}", player.getId(), table.getId());
 
-        return new PlayerUpdate(table.getId(), player.getId(), currentPlayers);
+        return new PlayerUpdate(table.getId(), player.getId());
     }
     /**
      * Trys to find a Table with less than 6 Player.

@@ -3,9 +3,12 @@ package de.poker.engine.service;
 import de.poker.api.dto.PlayerUpdate;
 import de.poker.api.exceptions.TableFullException;
 import de.poker.api.exceptions.TableNotFoundException;
+import de.poker.engine.data.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -25,7 +28,8 @@ class TableServiceTest {
     void registerNewPlayerNoTable(){
         PlayerUpdate testee = service.registerPlayer(null);
 
-        assertThat(testee.oldPlayers()).isEmpty();
+        List<Player> players = service.getTableById(testee.table()).getPlayers();
+        assertThat(players).hasSize(1);
         assertThat(testee.table()).isNotBlank();
         assertThat(testee.newPlayer()).isNotBlank();
     }
@@ -36,7 +40,8 @@ class TableServiceTest {
 
         PlayerUpdate testee = service.registerPlayer(null);
 
-        assertThat(testee.oldPlayers()).contains(reference.newPlayer());
+        List<Player> players = service.getTableById(testee.table()).getPlayers();
+        assertThat(players).hasSize(2);
         assertThat(testee.table()).isEqualTo(reference.table());
         assertThat(testee.newPlayer()).isNotBlank();
     }
@@ -50,11 +55,13 @@ class TableServiceTest {
         service.registerPlayer(null);
         PlayerUpdate reference = service.registerPlayer(null);
 
-        assertThat(reference.oldPlayers()).hasSize(5);
+        List<Player> playersReference = service.getTableById(reference.table()).getPlayers();
+        assertThat(playersReference).hasSize(6);
 
         PlayerUpdate testee = service.registerPlayer(null);
 
-        assertThat(testee.oldPlayers()).isEmpty();
+        List<Player> players = service.getTableById(testee.table()).getPlayers();
+        assertThat(players).hasSize(1);
         assertThat(testee.table()).isNotBlank();
         assertThat(testee.newPlayer()).isNotBlank();
     }
@@ -80,7 +87,8 @@ class TableServiceTest {
         //should be on thirdTable
         PlayerUpdate testee = service.registerPlayer(null);
 
-        assertThat(testee.oldPlayers()).isEmpty();
+        List<Player> players = service.getTableById(testee.table()).getPlayers();
+        assertThat(players).hasSize(1);
         assertThat(testee.table()).isNotBlank();
         assertThat(testee.newPlayer()).isNotBlank();
     }
@@ -106,7 +114,8 @@ class TableServiceTest {
         //should be on firstTable
         PlayerUpdate testee = service.registerPlayer(reference.table());
 
-        assertThat(testee.oldPlayers()).hasSize(6);
+        List<Player> players = service.getTableById(testee.table()).getPlayers();
+        assertThat(players).hasSize(7);
         assertThat(testee.table()).isEqualTo(reference.table());
         assertThat(testee.newPlayer()).isNotBlank();
     }

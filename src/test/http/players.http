@@ -5,6 +5,6 @@ POST {{baseUrl}}/players
 
 ### Seats a Player on a given Table
 
-@tableId = 5642e020-7d95-4fea-8acc-a6ceb6344e47sdfd
+@tableId = 7c22fac2-3224-41c9-b277-cdaf9aa32316sdfs
 
 POST {{baseUrl}}/players?table={{tableId}}
