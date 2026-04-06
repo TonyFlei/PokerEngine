@@ -16,10 +16,14 @@ public class GameService {
         this.messagingTemplate = messagingTemplate;
     }
 
-    public void notifyPlayerJoined(PlayerUpdate update) {
+    private void notifyPlayerJoined(PlayerUpdate update) {
 
         PlayerJoinedEvent event = new PlayerJoinedEvent(update.newPlayer());
 
         messagingTemplate.convertAndSend("/topic/table/" + update.table(), event);
+    }
+
+    public void handlePlayerJoined(PlayerUpdate update) {
+        notifyPlayerJoined(update);
     }
 }

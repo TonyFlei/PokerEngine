@@ -17,14 +17,30 @@ import java.util.List;
 public class TableService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TableService.class);
+    private final GameService gameService;
     private final List<Table> tables = new ArrayList<>();
 
-    public PlayerUpdate registerPlayer() {
-
-        return registerPlayer(null);
+    public TableService(GameService gameService) {
+        this.gameService = gameService;
     }
 
+    /**
+     * Creates a new Player Object and seats the Player.
+     * If a tableId is given and there is no Table with this id or the Table is full an Exception will be raised.
+     * @param tableId tableId of the Table you want to join, if there is no tableId given you get seated on a Table, that is not full.
+     * @return Information about the newly joined Player, the current Players on the Table and the Table.
+     */
     public PlayerUpdate registerPlayer(String tableId) {
+        Table table = getTable(tableId);
+
+        PlayerUpdate update = seatPlayer(table);
+
+        gameService.handlePlayerJoined(update);
+
+        return update;
+    }
+
+    private Table getTable(String tableId) {
         Table table;
 
         if (tableId == null) {
@@ -39,8 +55,7 @@ public class TableService {
                 throw new TableFullException(tableId);
             }
         }
-
-        return seatPlayer(table);
+        return table;
     }
 
     private static @NonNull PlayerUpdate seatPlayer(Table table) {

@@ -3,17 +3,27 @@ package de.poker.engine.service;
 import de.poker.api.dto.PlayerUpdate;
 import de.poker.api.exceptions.TableFullException;
 import de.poker.api.exceptions.TableNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TableServiceTest {
+    
+    TableService service;
+    
+    @BeforeEach
+    void init() {
+        GameService gameServiceMock = Mockito.mock(GameService.class);
+        
+        this.service = new TableService(gameServiceMock);
+    }
 
     @Test
     void registerNewPlayerNoTable(){
-        TableService service = new TableService();
-        PlayerUpdate testee = service.registerPlayer();
+        PlayerUpdate testee = service.registerPlayer(null);
 
         assertThat(testee.oldPlayers()).isEmpty();
         assertThat(testee.table()).isNotBlank();
@@ -22,10 +32,9 @@ class TableServiceTest {
 
     @Test
     void registerNewPlayerOneTable(){
-        TableService service = new TableService();
-        PlayerUpdate reference = service.registerPlayer();
+        PlayerUpdate reference = service.registerPlayer(null);
 
-        PlayerUpdate testee = service.registerPlayer();
+        PlayerUpdate testee = service.registerPlayer(null);
 
         assertThat(testee.oldPlayers()).contains(reference.newPlayer());
         assertThat(testee.table()).isEqualTo(reference.table());
@@ -34,17 +43,16 @@ class TableServiceTest {
 
     @Test
     void registerNewPlayerFullTable(){
-        TableService service = new TableService();
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        PlayerUpdate reference = service.registerPlayer();
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        PlayerUpdate reference = service.registerPlayer(null);
 
         assertThat(reference.oldPlayers()).hasSize(5);
 
-        PlayerUpdate testee = service.registerPlayer();
+        PlayerUpdate testee = service.registerPlayer(null);
 
         assertThat(testee.oldPlayers()).isEmpty();
         assertThat(testee.table()).isNotBlank();
@@ -53,25 +61,24 @@ class TableServiceTest {
 
     @Test
     void registerNewPlayerTwoFullTable(){
-        TableService service = new TableService();
         //first Table
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
 
         //second Table
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
 
         //should be on thirdTable
-        PlayerUpdate testee = service.registerPlayer();
+        PlayerUpdate testee = service.registerPlayer(null);
 
         assertThat(testee.oldPlayers()).isEmpty();
         assertThat(testee.table()).isNotBlank();
@@ -80,22 +87,21 @@ class TableServiceTest {
 
     @Test
     void registerNewPlayerOnDedicatedTable(){
-        TableService service = new TableService();
         //first Table
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        var reference = service.registerPlayer();
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        var reference = service.registerPlayer(null);
 
         //second Table
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
-        service.registerPlayer();
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
+        service.registerPlayer(null);
 
         //should be on firstTable
         PlayerUpdate testee = service.registerPlayer(reference.table());
@@ -107,16 +113,14 @@ class TableServiceTest {
 
     @Test
     void registerNewPlayerOnDedicatedTableNotFound(){
-        TableService service = new TableService();
 
         assertThatThrownBy(() -> service.registerPlayer("notATable")).isInstanceOf(TableNotFoundException.class).hasMessage("Table with id: notATable does not exist");
     }
 
     @Test
     void registerNewPlayerOnDedicatedTableFullTable(){
-        TableService service = new TableService();
 
-        var reference = service.registerPlayer();
+        var reference = service.registerPlayer(null);
 
         service.registerPlayer(reference.table());
         service.registerPlayer(reference.table());
