@@ -5,14 +5,17 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Table {
     private static final Logger LOG = LoggerFactory.getLogger(Table.class);
 
+    private String id;
     private List<Player> players;
     private GameState gameState;
 
     public Table() {
+        this.id = UUID.randomUUID().toString();
         this.players = new ArrayList<>();
         this.gameState = new GameState();
     }
@@ -29,5 +32,9 @@ public class Table {
 
     public List<Player> getPlayers() {
         return players;
+    }
+
+    public String getId() {
+        return id;
     }
 }

@@ -1,5 +1,7 @@
 package de.poker.engine.service;
 
+import de.poker.api.dto.PlayerJoinedEvent;
+import de.poker.api.dto.PlayerUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,10 @@ public class GameService {
         this.messagingTemplate = messagingTemplate;
     }
 
-    public void notifyPlayerJoined(String playerId) {
-        messagingTemplate.convertAndSend("/topic/playerJoined", playerId);
+    public void notifyPlayerJoined(PlayerUpdate update) {
+
+        PlayerJoinedEvent event = new PlayerJoinedEvent(update.newPlayer());
+
+        messagingTemplate.convertAndSend("/topic/table/" + update.table(), event);
     }
 }

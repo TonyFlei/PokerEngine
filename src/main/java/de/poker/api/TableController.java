@@ -24,12 +24,12 @@ public class TableController {
     }
 
     @GetMapping("/registerPlayer")
-    public PlayerUpdate registerPlayer(){
+    public PlayerUpdate registerPlayer() {
         LOG.info("Registering a new Player");
 
         PlayerUpdate update = tableService.registerPlayer();
 
-        gameService.notifyPlayerJoined(update.newPlayer());
+        gameService.notifyPlayerJoined(update);
 
         LOG.info("A new Player with the id: {} has been registered", update.newPlayer());
 
