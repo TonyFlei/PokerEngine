@@ -38,16 +38,11 @@ public class Table {
         return id;
     }
 
-    public boolean checkAndStartGame() {
-        //When game is already running return false
-        if (!gameState.getStatus().equals(GameStatus.WAITING)) return false;
-
-        startGame();
-
-        return true;
+    public void initGame() {
+        //ToDo Status anpassen, Karten austeilen, Spieler List blocken usw.
     }
 
-    private void startGame() {
-        //ToDo Status anpassen, Karten austeilen, Spieler List blocken usw.
+    public void stopGame() {
+        gameState.setStatus(GameStatus.WAITING);
     }
 }

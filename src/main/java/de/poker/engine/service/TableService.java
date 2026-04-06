@@ -49,7 +49,7 @@ public class TableService {
         PlayerUpdate update = seatPlayer(table);
 
         //Only if 1 Player is waiting you have to check if the game can start. The rest will be handled by the game loop.
-        if (table.getPlayers().size() == 2) gameService.checkAndStartGame(table);
+        if (table.getPlayers().size() == 2) gameService.startGame(table);
 
         return update;
     }
