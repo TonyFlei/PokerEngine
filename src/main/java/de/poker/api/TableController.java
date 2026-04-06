@@ -1,5 +1,6 @@
 package de.poker.api;
 
+import de.poker.api.dto.PlayerUpdate;
 import de.poker.engine.service.GameService;
 import de.poker.engine.service.TableService;
 import org.slf4j.Logger;
@@ -22,17 +23,16 @@ public class TableController {
         this.gameService = gameService;
     }
 
-    //ToDo: vermutlich sollte man dem Spieler sagen, wer alles am tisch sitzt.
     @GetMapping("/registerPlayer")
-    public String registerPlayer(){
+    public PlayerUpdate registerPlayer(){
         LOG.info("Registering a new Player");
 
-        String playerId = tableService.registerPlayer();
+        PlayerUpdate update = tableService.registerPlayer();
 
-        gameService.notifyPlayerJoined(playerId);
+        gameService.notifyPlayerJoined(update.newPlayer());
 
-        LOG.info("A new Player with the id: {} has been registered", playerId);
+        LOG.info("A new Player with the id: {} has been registered", update.newPlayer());
 
-        return playerId;
+        return update;
     }
 }

@@ -26,4 +26,8 @@ public class Table {
 
         return player;
     }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
 }
