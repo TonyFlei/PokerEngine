@@ -75,4 +75,30 @@ class TableServiceTest {
         assertThat(testee.newPlayer()).isNotBlank();
     }
 
+    @Test
+    void registerNewPlayerOnDedicatedTable(){
+        TableService service = new TableService();
+        //first Table
+        service.registerPlayer();
+        service.registerPlayer();
+        service.registerPlayer();
+        service.registerPlayer();
+        service.registerPlayer();
+        var reference = service.registerPlayer();
+
+        //second Table
+        service.registerPlayer();
+        service.registerPlayer();
+        service.registerPlayer();
+        service.registerPlayer();
+        service.registerPlayer();
+        service.registerPlayer();
+
+        //should be on firstTable
+        PlayerUpdate testee = service.registerPlayer(reference.table());
+
+        assertThat(testee.oldPlayers()).hasSize(6);
+        assertThat(testee.table()).isEqualTo(reference.table());
+        assertThat(testee.newPlayer()).isNotBlank();
+    }
 }

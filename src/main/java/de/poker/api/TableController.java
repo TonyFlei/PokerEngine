@@ -5,9 +5,7 @@ import de.poker.engine.service.GameService;
 import de.poker.engine.service.TableService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -23,11 +21,13 @@ public class TableController {
         this.gameService = gameService;
     }
 
-    @GetMapping("/registerPlayer")
-    public PlayerUpdate registerPlayer() {
+    @PostMapping("/players")
+    public PlayerUpdate registerPlayer(
+            @RequestParam(required = false) String table
+    ) {
         LOG.info("Registering a new Player");
 
-        PlayerUpdate update = tableService.registerPlayer();
+        PlayerUpdate update = tableService.registerPlayer(table);
 
         gameService.notifyPlayerJoined(update);
 

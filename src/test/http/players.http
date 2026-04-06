@@ -1,0 +1,10 @@
+@baseUrl = http://localhost:8080/api
+
+### Creates a new Player
+POST {{baseUrl}}/players
+
+### Seats a Player on a given Table
+
+@tableId = 8c3d64da-de27-41aa-9802-d03f9243426
+
+POST {{baseUrl}}/players?table={{tableId}}

@@ -1,6 +1,7 @@
 package de.poker.engine.service;
 
 import de.poker.api.dto.PlayerUpdate;
+import de.poker.api.exceptions.TableNotFoundException;
 import de.poker.engine.data.Player;
 import de.poker.engine.data.Table;
 import org.jspecify.annotations.NonNull;
@@ -19,8 +20,18 @@ public class TableService {
 
     public PlayerUpdate registerPlayer() {
 
-        Table table = findTable();
+        return registerPlayer(null);
+    }
 
+    public PlayerUpdate registerPlayer(String tableId) {
+
+        Table table = tableId != null ? tables.stream().filter(t -> t.getId().equals(tableId)).findFirst().orElseThrow(() -> new TableNotFoundException(tableId)) :
+                findTable();
+
+        return seatPlayer(table);
+    }
+
+    private static @NonNull PlayerUpdate seatPlayer(Table table) {
         List<String> currentPlayers = table.getPlayers().stream().map(Player::getId).toList();
 
         Player player = table.registerPlayer();
@@ -29,7 +40,6 @@ public class TableService {
 
         return new PlayerUpdate(table.getId(), player.getId(), currentPlayers);
     }
-
     /**
      * Trys to find a Table with less than 6 Player.
      * If the List of Tables is empty it will create a new one.
