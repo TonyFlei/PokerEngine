@@ -31,10 +31,13 @@ Wird ausgelöst, wenn ein neuer Spieler dem Spiel beitritt.
 
 ### Subscribe (Topic)
 
-/topic/playerJoined
+/topic/table/{tableId}
 
 ### Payload
 
-```text
-"{playerId}"
+```json
+{
+  "type" : "Player_Joined",
+  "player" : "playerId"
+}
 ```
