@@ -33,12 +33,8 @@ public class TableService {
      * <p>If no {@code tableId} is provided, the player will be seated at the first available table
      * that has free capacity.</p>
      *
-     * <p>After successfully seating the player, all other players at the table are notified.
-     * If the newly seated player is the second player at the table, the game start is triggered.</p>
-     *
      * @param tableId the ID of the table to join; may be {@code null}
-     * @return a {@link PlayerUpdate} containing information about the newly joined player,
-     *         the current players at the table, and the table state
+     * @return a {@link PlayerUpdate} containing information about the newly joined player and the table.
      *
      * @throws TableNotFoundException if the specified table does not exist
      * @throws TableFullException if the specified table has no available seats
@@ -46,12 +42,7 @@ public class TableService {
     public PlayerUpdate registerPlayer(String tableId) {
         Table table = getTable(tableId);
 
-        PlayerUpdate update = seatPlayer(table);
-
-        //Only if 1 Player is waiting you have to check if the game can start. The rest will be handled by the game loop.
-        if (table.getPlayers().size() == 2) gameService.startGame(table);
-
-        return update;
+        return seatPlayer(table);
     }
 
     private Table getTable(String tableId) {
@@ -113,5 +104,13 @@ public class TableService {
 
         LOG.info("Created a new Table with the id: {}", table.getId());
         return table;
+    }
+
+    public boolean startGameAtTable(String tableId) {
+        Table table = getTableById(tableId);
+
+        if (table.getPlayers().size() < 2) return false;
+
+        return gameService.startGame(table);
     }
 }

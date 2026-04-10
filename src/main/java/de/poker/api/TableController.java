@@ -4,10 +4,9 @@ import de.poker.api.dto.PlayerUpdate;
 import de.poker.engine.service.TableService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -32,5 +31,22 @@ public class TableController {
         LOG.info("A new Player with the id: {} has been registered", update.newPlayer());
 
         return update;
+    }
+
+    @PostMapping("/start/{tableId}")
+    public ResponseEntity<String> startGameAtTable(
+            @PathVariable String tableId
+    ) {
+        LOG.info("Trying to start the game at Table: {}", tableId);
+
+        boolean started = tableService.startGameAtTable(tableId);
+
+        if (started) {
+            return ResponseEntity.ok("Game started successfully");
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body("Game could not be started");
     }
 }
